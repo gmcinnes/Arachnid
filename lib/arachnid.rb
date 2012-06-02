@@ -57,7 +57,7 @@ class Arachnid
 
 						links.each do |link|
 							fullurl = make_absolute(link,response.effective_url)
-							if(internal_link?(fullurl) && !@global_visited.include?(split_url_at_hash(link)) && no_hash_in_url?(link) && no_image_in_url?(fullurl) && !matches_url_in_regex(link))
+							if(internal_link?(fullurl) && !@global_visited.include?(split_url_at_hash(link)) && no_hash_in_url?(link) && no_image_in_url?(fullurl) && !matches_url_in_regexes(link))
 								
 								sanitized_link = sanitize_link(split_url_at_hash(link))
 								if(sanitized_link)

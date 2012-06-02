@@ -15,6 +15,8 @@ class Arachnid
 		@split_url_at_hash = options[:split_url_at_hash] ? options[:split_url_at_hash] : false
 		@exclude_urls_with_hash = options[:exclude_urls_with_hash] ? options[:exclude_urls_with_hash] : false
 		@exclude_urls_with_images = options[:exclude_urls_with_images] ? options[:exclude_urls_with_images] : false
+    @exclude_urls_by_regexes = options[:exclude_urls_by_regexs] ? options[:exclude_urls_by_regexs] :false
+
 		@proxy_list = options[:proxy_list] ? options[:proxy_list] : nil
 		
 		@debug = options[:debug] ? options[:debug] : false
@@ -55,7 +57,7 @@ class Arachnid
 
 						links.each do |link|
 							fullurl = make_absolute(link,response.effective_url)
-							if(internal_link?(fullurl) && !@global_visited.include?(split_url_at_hash(link)) && no_hash_in_url?(link) && no_image_in_url?(fullurl))
+							if(internal_link?(fullurl) && !@global_visited.include?(split_url_at_hash(link)) && no_hash_in_url?(link) && no_image_in_url?(fullurl) && !matches_url_in_regex(link))
 								
 								sanitized_link = sanitize_link(split_url_at_hash(link))
 								if(sanitized_link)
@@ -121,6 +123,12 @@ class Arachnid
 		return url.to_s.split('#')[0]
 
 	end
+
+  def matches_url_in_regexes?(url)
+    matchp = @exclude_urls_by_regexes.find { |regex| regex.match? url }
+    puts "Matched #{url} with #{regex}" if matchp
+    !!matchp
+  end
 
 	def no_hash_in_url?(url)
 		return true unless @exclude_urls_with_hash
